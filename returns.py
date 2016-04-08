@@ -25,6 +25,17 @@ probs.columns = ['p']
 def ret(x):
     return ((x['p'])*(avgright) + (1-x['p'])*(avgwrong))*100
 
+def allret(x):
+    return ((x['p'])*(df['right']*100) + (1-x['p'])*(df['wrong'])*100)
+
 probs['return'] = probs.apply(ret, axis=1)
 
-print probs
+allrets = pd.DataFrame(probs.apply(allret, axis=1))
+
+probs['stddev'] = allrets.std(axis=1)
+
+#print probs
+
+writer = pd.ExcelWriter('output.xlsx', engine='xlsxwriter')
+probs.to_excel(writer, sheet_name='Sheet1')
+writer.save()
